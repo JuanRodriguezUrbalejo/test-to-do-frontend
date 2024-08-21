@@ -1,0 +1,59 @@
+<div class="container">
+    <div class="labels">
+        <div *ngFor="let label of labels1; let i = index" class="label-item">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" (change)="onSwitchChange($event, label)">
+                <label class="form-check-label" for="flexSwitchCheckDefault">
+                    <span>{{ label }}</span>
+                </label>
+            </div>
+            <div class="label-icons">
+                <button (click)="editLabel('labels1', i)">
+                    <img src="assets/img/editar.png" alt="editar">
+                </button>
+                <button (click)="deleteLabel('labels1', i)">
+                    <img src="assets/img/eliminar.png" alt="eliminar">
+                </button>
+            </div>
+        </div>
+    </div>
+    
+
+    <hr>
+
+    <div class="labels">
+        <div *ngFor="let label of labels2; let i = index" class="label-item">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked (change)="onSwitchChange($event, label)">
+                <label class="form-check-label" for="flexSwitchCheckChecked">
+                    <span>{{ label }}</span>
+                </label>
+            </div>
+            <div class="label-icons">
+                <button (click)="editLabel('labels2', i)">
+                    <img src="assets/img/editar.png" alt="editar">
+                </button>
+                <button (click)="deleteLabel('labels2', i)">
+                    <img src="assets/img/eliminar.png" alt="eliminar">
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button data-bs-toggle="modal" data-bs-target="#modal" data-bs-whatever="@getbootstrap" class="btn-action">
+            <img src="assets/img/mas.png" alt="agregar">
+        </button>
+        <div class="actions-mod">
+            <button (click)="addLabel('labels1')" class="btn-action">
+                <img src="assets/img/controles-deslizantes.png" alt="controles-deslizantes">
+            </button>
+        </div>
+        
+    </div>
+    <mat-card class="demo-inline-calendar-card">
+        <mat-calendar [(selected)]="selected"></mat-calendar>
+    </mat-card>
+</div>
+<app-modal-task #modal ></app-modal-task>
+

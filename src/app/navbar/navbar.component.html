@@ -1,0 +1,25 @@
+<nav class="navbar">
+  <div class="navbar-title">
+    <h2>Tareas</h2>
+  </div>
+  <div class="navbar-container">
+    <form [formGroup]="form">
+      <div class="navbar-buttons">
+        <div formArrayName="lists" class="dynamic-buttons">
+          
+          <input *ngFor="let btn of lists.controls; let i = index"
+                 [formControlName]="i"
+                 (dblclick)="btn.enable()" 
+                 (blur)="updateListName(i)" 
+                 (keyup.enter)="updateListName(i)" 
+                 class="btn" />
+        </div>
+
+        <button type="button" class="btn btn-add" (click)="addButton()">+ Nueva Lista</button>
+      </div>
+    </form>
+    <a href="#" class="btn-delete" (click)="delete()">
+      <img src="assets/img/eliminar.png" alt="Eliminar">
+    </a>
+  </div>
+</nav>

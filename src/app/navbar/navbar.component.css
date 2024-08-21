@@ -1,0 +1,95 @@
+.navbar {
+  background-color: #FFDD35;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.navbar-title {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.navbar-title h2 {
+  color: #ffffff; 
+  font-size: 32px;
+  margin: 0;
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.navbar-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.dynamic-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  background-color: #006FB9;
+  border: none;
+  font-family: Arial, sans-serif;
+  color: white;
+  padding: 10px 20px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.btn:hover {
+  background-color: #0289e4;
+  transform: scale(1.05);
+}
+
+.btn-add {
+  background-color: #006FB9;
+}
+
+.btn-add:hover {
+  background-color: #0289e4;
+}
+
+.btn-delete {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 10px;
+}
+
+.btn-delete img {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.btn-delete img:hover {
+  transform: scale(1.1);
+}
+
+input.btn {
+  background-color: #006FB9;
+  border: none;
+  color: white;
+  padding: 10px;
+  font-size: 20px;
+  cursor: pointer;
+  border-radius: 4px;
+  text-align: center;
+  width: 100px;
+}
+
+input.btn:focus {
+  outline: none;
+}
