@@ -1,3 +1,95 @@
-body{
+.container {
+    width: 100%;
+    max-width: none;
+    margin: 0 auto;
+    padding: 10px;
     background-color: #F1F4FA;
+}
+
+.labels {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.demo-inline-calendar-card {
+    width: 300px;
+  }
+
+.label-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #F1F4FA;
+    
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+}
+
+.form-check-input {
+    margin-right: 10px;
+}
+
+.label-icons {
+    display: flex;
+    gap: 10px;
+}
+
+.label-icons button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.label-icons img {
+    width: 20px;
+    height: 20px;
+}
+
+hr {
+    width: 100%;
+    border: 0;
+    height: 1px;
+    background: #000000;
+    margin: 20px 0;
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+.actions-mod{
+    padding-left: 50px;
+}
+
+
+
+.btn-action {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.btn-action img {
+    width: 40px;
+    height: 40px;
+}
+
+.label-item .form-check-input:checked ~ .form-check-label span {
+    display: block;
+    position: relative;
+    top: 10px;
+}
+
+.label-item .form-check-input:checked ~ .label-icons {
+    position: relative;
+    top: 10px;
 }
