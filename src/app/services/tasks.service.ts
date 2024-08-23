@@ -34,5 +34,9 @@ export class TaskService{
         return this.http.delete<Task>(`${this.apiUrl}${pk}/`);
     }
 
+    getTasksList(pk: number): Observable<Task[]>{
+        return this.http.get<Task[]>(`${this.apiUrl}lista/${pk}/`,this.httpOptions);
+    }
+
 
 }
