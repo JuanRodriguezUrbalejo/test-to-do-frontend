@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit} from '@angular/core';
+import { Component, OnDestroy, OnInit} from '@angular/core';
 import { ModalTaskComponent } from '../modal-task/modal-task.component';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -8,6 +8,8 @@ import { MatInputModule } from '@angular/material/input';
 import {MatCardModule} from '@angular/material/card';
 import { TaskService } from '../services/tasks.service';
 import { Task } from '../models/task';
+import { SharedService } from '../services/shared.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-tasks',
@@ -17,25 +19,42 @@ import { Task } from '../models/task';
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.css'
 })
-export class TasksComponent implements OnInit{
+export class TasksComponent implements OnInit, OnDestroy{
   
   selected: Date | null = null;
   tasksPendiente: Task[] = [];
   tasksCompletada: Task[]=[];
   task_id: number | null = null;
-  
+  select_list_id: number | null = null;
+  private subscription: Subscription | null = null;
 
   constructor(
     private taskService: TaskService,
-    
+    private sharedService: SharedService,
   ){}
 
-  ngOnInit() {
-    this.getTask();
+  ngOnDestroy(): void {
+    if(this.subscription){
+      this.subscription?.unsubscribe();
+    }
   }
 
+  ngOnInit() {
+    this.subscription = this.sharedService.select_list_id$.subscribe(id =>{
+      if(id !== null){
+        this.select_list_id = id;
+        this.getTask();
+      }
+    });
+  }
+
+  
+
   getTask(){
-    this.taskService.getTasks().subscribe({
+    console.log(this.select_list_id);
+    this.tasksCompletada=[];
+    this.tasksPendiente=[];
+    this.taskService.getTasksList(Number(this.select_list_id)).subscribe({
       next: (res) => {
         res.map((r)=>{
           if (r.status) {
@@ -53,12 +72,9 @@ export class TasksComponent implements OnInit{
   }
 
   onSwitchChange(event: Event, task: Task): void {
-    
     task.status = !task.status;
     this.taskService.putTasks(task.id,task).subscribe({
       next:() => {
-        this.tasksCompletada=[];
-        this.tasksPendiente=[];
         this.getTask();
       },
       error: (error) => {

@@ -48,7 +48,7 @@
   transition: background-color 0.3s ease, transform 0.3s ease;
   border-radius: 4px;
   text-align: center;
-}
+} 
 
 .btn:hover {
   background-color: #0289e4;
@@ -92,4 +92,8 @@ input.btn {
 
 input.btn:focus {
   outline: none;
+}
+
+input.btn-active {
+  background-color: #2E8140;
 }

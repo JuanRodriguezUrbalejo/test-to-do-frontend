@@ -1,19 +1,38 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { Observable } from "rxjs";
+import { environment } from "../..//environments/environment"
+import { List } from "../models/list";
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
+export class ListService{
+    constructor(private http:HttpClient){}
+    private apiUrl: string = `${environment.apiUrl}/to_do/lista/`
+    httpOptions = {
+        headers: new HttpHeaders({'Content-Type':'application/json'})
+    }
+    
+    getLists(): Observable<List[]>{
+        return this.http.get<List[]>(`${this.apiUrl}lista/`, this.httpOptions);
+    }
 
-export class ListService {
-  private initialLists: string[] = ['Lista 1', 'Lista 2']; // dummys
+    postLists(list: List): Observable<List>{
+        return this.http.post<List>(`${this.apiUrl}crear/`, list, this.httpOptions);
+    }
 
-  getLists(): Observable<string[]> {
-    return of(this.initialLists);
-  }
+    getList(pk: number): Observable<List>{
+        return this.http.get<List>(`${this.apiUrl}${pk}/`);
+    }
 
-  updateListName(index: number, newName: string): Observable<string[]> {
-    this.initialLists[index] = newName;
-    return of(this.initialLists);
-  }
+    putLists(pk: number, list: string): Observable<string>{
+        return this.http.put<string>(`${this.apiUrl}${pk}/`, list, this.httpOptions);
+    }
+
+    deleteList(pk: number): Observable<List>{
+        return this.http.delete<List>(`${this.apiUrl}${pk}/`);
+    }
+
+
 }

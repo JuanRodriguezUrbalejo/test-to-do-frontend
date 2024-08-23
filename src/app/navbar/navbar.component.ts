@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { FormBuilder, FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ListService } from '../services/listprueba.service';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ListService } from '../services/list.service';
 import { CommonModule } from '@angular/common';
+import { List } from '../models/list';
+import { SharedService } from '../services/shared.service';
 
 @Component({
   selector: 'app-navbar',
@@ -13,46 +15,114 @@ import { CommonModule } from '@angular/common';
 })
 
 export class NavbarComponent implements OnInit {
-  form: FormGroup;
-  maxButtons = 10; 
-
-  constructor(private fb: FormBuilder, private listService: ListService) {
-    this.form = this.fb.group({
-      lists: this.fb.array([]) // Aquí se manejan las listas
-    });
+  @Input() props!:{
+    list_id: number | null
   }
+
+  select_list_id: number | null = null;
+  is_button_disable: boolean = false;
+  lists: List[] = [];
+  list_id: number | null = null;
+
+  list_form = new FormGroup({
+    name: new FormControl('', [Validators.required]),
+  });
+
+  list_obj: List = new List();
+
+  constructor(
+    private listService: ListService,
+    private sharedService: SharedService,
+  ){}
+ 
 
   ngOnInit() {
-    // Se obtienen las listas del back
-    this.listService.getLists().subscribe(data => {
-      this.initializeForm(data);
+    this.getList();
+    
+  }
+
+  getList(){
+    this.listService.getLists().subscribe({
+      next: (res) => {
+        this.select_list_id = res[0].id;
+        this.sharedService.set_select_list_id(this.select_list_id);
+        res.map((r)=>{
+          if(r.is_active){
+            this.lists.push(r);
+          }
+        })
+      },
+      error: (error) => {
+        console.error(error);
+      }
     });
   }
 
-  get lists(): FormArray {
-    return this.form.get('lists') as FormArray;
+  is_active(select_list_id: number):boolean {
+    return this.select_list_id === select_list_id;
   }
 
-  initializeForm(lists: string[]) {
-    lists.forEach(list => this.lists.push(this.fb.control(list)));
+  set_list_id(id:number){
+    this.list_id = id;
   }
 
-  addButton() {
-    if (this.lists.length < this.maxButtons) {
-      const newListName = `Lista ${this.lists.length + 1}`;
-      this.lists.push(this.fb.control(newListName));
+  new_list(){
+    this.lists.push(this.list_obj);
+    this.is_button_disable = true;
+  }
+
+  save_list(name: string){
+    this.list_obj.name = name;
+    this.listService.postLists(this.list_obj).subscribe({
+      next: (res) =>{
+        this.is_button_disable = false;
+        const list_update = this.lists.find(list=>list.id === 0);
+        if(list_update){
+          list_update.name = res.name;
+          list_update.id = res.id;
+          list_update.is_active = res.is_active;
+          this.list_obj = new List();
+        }
+        
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
+  delete_list(){
+    this.listService.deleteList(Number(this.list_id)).subscribe({
+      next: () =>{
+        window.location.reload();
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
+  update_class(id: number){
+    this.select_list_id = id;
+    this.sharedService.set_select_list_id(this.select_list_id);
+  }
+
+  update_list(target:EventTarget | null, id: number){
+    const input = target as HTMLInputElement;
+    if (id==0) {
+      this.save_list(input.value);
     } else {
-      alert('No puedes agregar más de 10 listas.');
+      this.listService.putLists(id,JSON.stringify({'name':input.value})).subscribe({
+        next: (res) =>{
+          console.log(res);
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      });
     }
+    
   }
 
-  updateListName(index: number) {
-    const newName = this.lists.at(index).value;
-    this.listService.updateListName(index, newName).subscribe();
-    console.log(newName);
-  }
-
-  delete(){
-    //TODO: falta realizar la codificación para eliminar las listas
-  }
+  
 }
