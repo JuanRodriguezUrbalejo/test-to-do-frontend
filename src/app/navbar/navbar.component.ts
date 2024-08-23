@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { FormBuilder, FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ListService } from '../services/list.service';
+import { ListService } from '../services/listprueba.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
