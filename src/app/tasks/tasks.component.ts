@@ -18,8 +18,7 @@ import { Task } from '../models/task';
   styleUrl: './tasks.component.css'
 })
 export class TasksComponent implements OnInit{
-  labels1: string[] = [];
-  labels2: string[] = [];
+  
   selected: Date | null = null;
   tasksPendiente: Task[] = [];
   tasksCompletada: Task[]=[];
@@ -38,10 +37,7 @@ export class TasksComponent implements OnInit{
   getTask(){
     this.taskService.getTasks().subscribe({
       next: (res) => {
-        console.log(res);
         res.map((r)=>{
-          console.log(r);
-          console.log(r.status);
           if (r.status) {
             this.tasksCompletada.push(r);
           } else {
