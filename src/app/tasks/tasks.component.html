@@ -1,17 +1,17 @@
 <div class="container">
     <div class="labels">
-        <div *ngFor="let label of labels1; let i = index" class="label-item">
+        <div *ngFor="let task of tasksPendiente; let i = index" class="label-item">
             <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" (change)="onSwitchChange($event, label)">
+                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" (change)="onSwitchChange($event, task)">
                 <label class="form-check-label" for="flexSwitchCheckDefault">
-                    <span>{{ label }}</span>
+                    <span>{{ task.name }}</span>
                 </label>
             </div>
             <div class="label-icons">
-                <button (click)="editLabel('labels1', i)">
+                <button data-bs-toggle="modal" data-bs-target="#modal" data-bs-whatever="@getbootstrap" (click)="set_tasks_component_id(task.id)">
                     <img src="assets/img/editar.png" alt="editar">
                 </button>
-                <button (click)="deleteLabel('labels1', i)">
+                <button (click)="delete_tasks_component()">
                     <img src="assets/img/eliminar.png" alt="eliminar">
                 </button>
             </div>
@@ -22,30 +22,22 @@
     <hr>
 
     <div class="labels">
-        <div *ngFor="let label of labels2; let i = index" class="label-item">
+        <div *ngFor="let task of tasksCompletada; let i = index" class="label-item">
             <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked (change)="onSwitchChange($event, label)">
+                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked (change)="onSwitchChange($event, task)">
                 <label class="form-check-label" for="flexSwitchCheckChecked">
-                    <span>{{ label }}</span>
+                    <span>{{ task.name }}</span>
                 </label>
-            </div>
-            <div class="label-icons">
-                <button (click)="editLabel('labels2', i)">
-                    <img src="assets/img/editar.png" alt="editar">
-                </button>
-                <button (click)="deleteLabel('labels2', i)">
-                    <img src="assets/img/eliminar.png" alt="eliminar">
-                </button>
             </div>
         </div>
     </div>
 
     <div class="actions">
-        <button data-bs-toggle="modal" data-bs-target="#modal" data-bs-whatever="@getbootstrap" class="btn-action">
+        <button data-bs-toggle="modal" data-bs-target="#modal" data-bs-whatever="@getbootstrap" class="btn-action" (click)="set_tasks_component_id(0)">
             <img src="assets/img/mas.png" alt="agregar">
         </button>
         <div class="actions-mod">
-            <button (click)="addLabel('labels1')" class="btn-action">
+            <button class="btn-action">
                 <img src="assets/img/controles-deslizantes.png" alt="controles-deslizantes">
             </button>
         </div>
@@ -55,5 +47,32 @@
         <mat-calendar [(selected)]="selected"></mat-calendar>
     </mat-card>
 </div>
-<app-modal-task #modal ></app-modal-task>
+<app-modal-task #modal [props]="{task_id}" ></app-modal-task>
 
+<!-- Delete modal -->
+<div id="modal_delete" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"> Confirmar </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="alert alert-danger alert-dismissible alert-styled-left border-top-0 border-bottom-0 border-right-0">
+                    <span class="font-weight-semibold">
+                        <h4>¿Estás seguro que deseas eliminar la tarea?</h4>
+                    </span>La tarea se eliminará permanentemente.
+                </div>
+                <hr>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" (click)="delete_tasks_component()" data-bs-dismiss="modal" class="btn btn-danger">Eliminar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- /Delete modal -->

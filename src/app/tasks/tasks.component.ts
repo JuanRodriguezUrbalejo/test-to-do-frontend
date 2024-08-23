@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component} from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { ModalTaskComponent } from '../modal-task/modal-task.component';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import {MatCardModule} from '@angular/material/card';
+import { TaskService } from '../services/tasks.service';
+import { Task } from '../models/task';
 
 @Component({
   selector: 'app-tasks',
@@ -15,55 +17,72 @@ import {MatCardModule} from '@angular/material/card';
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.css'
 })
-export class TasksComponent {
+export class TasksComponent implements OnInit{
   labels1: string[] = [];
   labels2: string[] = [];
   selected: Date | null = null;
+  tasksPendiente: Task[] = [];
+  tasksCompletada: Task[]=[];
+  task_id: number | null = null;
+  
 
-  onSwitchChange(event: Event, label: string): void {
-    const inputElement = event.target as HTMLInputElement;
-    const isChecked = inputElement.checked;
+  constructor(
+    private taskService: TaskService,
+    
+  ){}
 
-    if (isChecked) {
-      // Mover el label a la parte inferior
-      this.moveLabelToLowerSection(label, 'labels1');
-    } else {
-      // Mover el label a la parte superior
-      this.moveLabelToUpperSection(label, 'labels2');
-    }
+  ngOnInit() {
+    this.getTask();
   }
 
-  moveLabelToLowerSection(label: string, sourceList: 'labels1' | 'labels2'): void {
-    const index = this[sourceList].indexOf(label);
-    if (index !== -1) {
-      this[sourceList].splice(index, 1);
-      this.labels2.push(label);
-    }
+  getTask(){
+    this.taskService.getTasks().subscribe({
+      next: (res) => {
+        console.log(res);
+        res.map((r)=>{
+          console.log(r);
+          console.log(r.status);
+          if (r.status) {
+            this.tasksCompletada.push(r);
+          } else {
+            this.tasksPendiente.push(r);
+          }
+          
+        })
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    })
   }
 
-  moveLabelToUpperSection(label: string, sourceList: 'labels1' | 'labels2'): void {
-    const index = this[sourceList].indexOf(label);
-    if (index !== -1) {
-      this[sourceList].splice(index, 1);
-      this.labels1.push(label);
-    }
+  onSwitchChange(event: Event, task: Task): void {
+    
+    task.status = !task.status;
+    this.taskService.putTasks(task.id,task).subscribe({
+      next:() => {
+        this.tasksCompletada=[];
+        this.tasksPendiente=[];
+        this.getTask();
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    })
+    
   }
 
-  addLabel(section: 'labels1' | 'labels2') {
-    const newLabel = prompt('Ingrese el nombre de la nueva tarea:');
-    if (newLabel) {
-      this[section].push(newLabel);
-    }
+  set_tasks_component_id(id:number){
+    this.task_id = id;
   }
 
-  editLabel(section: 'labels1' | 'labels2', index: number) {
-    const updatedLabel = prompt('Modificar tarea:', this[section][index]);
-    if (updatedLabel) {
-      this[section][index] = updatedLabel;
-    }
+  delete_tasks_component(){
+    this.taskService.deleteTask(Number(this.task_id)).subscribe(
+      () =>{
+        window.location.reload();
+      }
+    )
   }
+ 
 
-  deleteLabel(section: 'labels1' | 'labels2', index: number) {
-    this[section].splice(index, 1);
-  }
 }
