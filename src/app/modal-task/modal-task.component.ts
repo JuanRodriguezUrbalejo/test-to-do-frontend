@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges} from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy} from '@angular/core';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -8,6 +8,8 @@ import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { TaskService } from '../services/tasks.service';
 import { Task } from '../models/task';
 import {MatSelectModule} from '@angular/material/select';
+import { Subscription } from 'rxjs';
+import { SharedService } from '../services/shared.service';
 
 interface Priority {
   value: string;
@@ -22,10 +24,13 @@ interface Priority {
   templateUrl: './modal-task.component.html',
   styleUrl: './modal-task.component.css'
 })
-export class ModalTaskComponent implements OnChanges{
+export class ModalTaskComponent implements OnChanges, OnDestroy{
   @Input() props!:{
     task_id: number | null
   }
+
+  select_list_id: number | null = null;
+  private subscription: Subscription | null = null;
 
   
 
@@ -41,12 +46,19 @@ export class ModalTaskComponent implements OnChanges{
     {value: 'L', viewValue: 'Baja'},
   ];
 
-  constructor(private task: TaskService){}
+  constructor(
+    private task: TaskService,
+    private sharedService: SharedService,
+  ){}
 
   form_type: string = "Agregar tarea";
   task_obj: Task = new Task();
 
-  
+  ngOnDestroy(): void {
+    if(this.subscription){
+      this.subscription?.unsubscribe();
+    }
+  }
 
   ngOnChanges(): void {
     if (this.props.task_id == 0 || this.props.task_id == null) {
@@ -76,7 +88,12 @@ export class ModalTaskComponent implements OnChanges{
     this.task_obj.name = (this.task_form.get('name') as FormControl).value;
     this.task_obj.priority = (this.task_form.get('priority') as FormControl).value;
     this.task_obj.start_date = (this.task_form.get('start_date') as FormControl).value;
-    this.task_obj.list = 1;
+    this.subscription = this.sharedService.select_list_id$.subscribe(id =>{
+      if(id !== null){
+        this.select_list_id = id;
+        this.task_obj.list = this.select_list_id;
+      }
+    });
     
     if (this.form_type == 'Agregar tarea') {
         this.task.postTasks(this.task_obj).subscribe({
