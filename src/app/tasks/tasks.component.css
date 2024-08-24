@@ -25,19 +25,21 @@
     
 }
 
-.form-check {
+
+
+/*.form-check {
     display: flex;
     align-items: center;
-}
+}*/
 
 .form-check-input {
     margin-right: 10px;
 }
 
-.label-icons {
+/*.label-icons {
     display: flex;
     gap: 10px;
-}
+}*/
 
 .label-icons button {
     background: none;
@@ -65,17 +67,12 @@ hr {
     margin-top: 20px;
 }
 
-.actions-mod{
-    padding-left: 50px;
-}
-
-
-
 .btn-action {
     background: none;
     border: none;
     padding: 0;
     cursor: pointer;
+    
 }
 
 .btn-action img {
@@ -83,13 +80,19 @@ hr {
     height: 40px;
 }
 
-.label-item .form-check-input:checked ~ .form-check-label span {
-    display: block;
+.label-item .form-check-input:checked ~ .label-icons {
     position: relative;
     top: 10px;
 }
 
-.label-item .form-check-input:checked ~ .label-icons {
-    position: relative;
-    top: 10px;
+.lbl-red{
+    color:#C52136;
+}
+  
+.lbl-yellow{
+    color:#BCA017;
+}
+  
+.lbl-green{
+    color:#2E8140;
 }

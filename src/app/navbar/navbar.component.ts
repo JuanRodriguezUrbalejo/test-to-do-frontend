@@ -59,6 +59,7 @@ export class NavbarComponent implements OnInit {
   }
 
   is_active(select_list_id: number):boolean {
+    this.set_list_id(select_list_id);
     return this.select_list_id === select_list_id;
   }
 
@@ -122,6 +123,11 @@ export class NavbarComponent implements OnInit {
       });
     }
     
+  }
+
+  all_tasks_lists(){
+    this.select_list_id = 0;
+    this.sharedService.set_select_list_id(this.select_list_id);
   }
 
   

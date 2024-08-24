@@ -1,60 +1,68 @@
 <div class="container">
-    <div class="labels">
-        <div *ngFor="let task of tasksPendiente; let i = index" class="label-item">
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" (change)="onSwitchChange($event, task)">
-                <label class="form-check-label" for="flexSwitchCheckDefault">
-                    <span>{{ task.name }}</span>
-                </label>
-            </div>
-            <div class="label-icons">
-                <button data-bs-toggle="modal" data-bs-target="#modal" data-bs-whatever="@getbootstrap" (click)="set_tasks_component_id(task.id)">
-                    <img src="assets/img/editar.png" alt="editar">
-                </button>
-                <button (click)="delete_tasks_component()">
-                    <img src="assets/img/eliminar.png" alt="eliminar">
-                </button>
-            </div>
-        </div>
-    </div>
-    
-
-    <hr>
-
-    <div class="labels">
-        <div *ngFor="let task of tasksCompletada; let i = index" class="label-item">
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked (change)="onSwitchChange($event, task)">
-                <label class="form-check-label" for="flexSwitchCheckChecked">
-                    <span>{{ task.name }}</span>
-                </label>
+    @if (pendienteTask) {
+        <div class="labels">
+            <div *ngFor="let task of tasksPendiente; let i = index" class="label-item">
+                <div class="d-flex align-items-center form-switch" >
+                    <input class="form-check-input " type="checkbox" role="switch" id="flexSwitchCheckDefault" (change)="onSwitchChange($event, task)">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">
+                        <span [ngClass]="{
+                            'lbl-red': task.priority==='H', 
+                            'lbl-yellow': task.priority==='M',
+                            'lbl-green':task.priority==='L'}">{{ task.name }}</span>
+                    </label>
+                </div>
+                <div class="label-icons d-flex">
+                    <button data-bs-toggle="modal" data-bs-target="#modal" data-bs-whatever="@getbootstrap" (click)="set_tasks_component_id(task.id)">
+                        <img src="assets/img/editar.png" alt="editar">
+                    </button>
+                    <button data-bs-toggle="modal" data-bs-target="#modal_delete_tarea" data-bs-whatever="@getbootstrap" (click)="set_tasks_component_id(task.id)">
+                        <img src="assets/img/eliminar.png" alt="eliminar">
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
-
+        <hr>
+    }
+    @if (completadaTask) {
+        <div class="labels">
+            <div *ngFor="let task of tasksCompletada; let i = index" class="label-item">
+                <div class="d-flex align-items-center form-switch">
+                    <input class="form-check-input " type="checkbox" role="switch" id="flexSwitchCheckChecked" checked (change)="onSwitchChange($event, task)">
+                    <label class="form-check-label" for="flexSwitchCheckChecked">
+                        <span>{{ task.name }}</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    }
     <div class="actions">
-        <button data-bs-toggle="modal" data-bs-target="#modal" data-bs-whatever="@getbootstrap" class="btn-action" (click)="set_tasks_component_id(0)">
-            <img src="assets/img/mas.png" alt="agregar">
-        </button>
-        <div class="actions-mod">
-            <button class="btn-action">
+        @if (is_button_disable_add) {
+            <button data-bs-toggle="modal" data-bs-target="#modal" data-bs-whatever="@getbootstrap" class="btn-action" (click)="set_tasks_component_id(0)">
+                <img src="assets/img/mas.png" alt="agregar">
+            </button>
+        }
+        
+        <div class="dropup-center dropup" style="padding-left: 50px">
+            <button class="btn-action" type="button" data-bs-toggle="dropdown" aria-expanded="false" >
                 <img src="assets/img/controles-deslizantes.png" alt="controles-deslizantes">
             </button>
-        </div>
+            <ul class="dropdown-menu">
+              <li><button class="dropdown-item"  (click)="all_task()">Tareas de la lista</button></li>
+              <li><button class="dropdown-item"  [disabled]="is_button_disable_pendiente" (click)="pendiente_task()">Pendientes</button></li>
+              <li><button class="dropdown-item"  [disabled]="is_button_disable_completada" (click)="completada_task()">Completadas</button></li>
+            </ul>
+          </div>
         
     </div>
-    <mat-card class="demo-inline-calendar-card">
-        <mat-calendar [(selected)]="selected"></mat-calendar>
-    </mat-card>
 </div>
 <app-modal-task #modal [props]="{task_id}" ></app-modal-task>
 
 <!-- Delete modal -->
-<div id="modal_delete" class="modal fade" tabindex="-1">
+<div id="modal_delete_tarea" class="modal fade" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"> Confirmar </h5>
+                <h5 class="modal-title"> Eliminar </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 

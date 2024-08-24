@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { Component, OnDestroy, OnInit} from '@angular/core';
 import { ModalTaskComponent } from '../modal-task/modal-task.component';
 import {MatDatepickerModule} from '@angular/material/datepicker';
@@ -15,7 +15,7 @@ import { Subscription } from 'rxjs';
   selector: 'app-tasks',
   standalone: true,
   providers: [provideNativeDateAdapter()],
-  imports: [CommonModule, ModalTaskComponent,MatDatepickerModule,MatFormFieldModule,MatInputModule,MatCardModule],
+  imports: [CommonModule, ModalTaskComponent,MatDatepickerModule,MatFormFieldModule,MatInputModule,MatCardModule, NgIf],
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.css'
 })
@@ -27,6 +27,12 @@ export class TasksComponent implements OnInit, OnDestroy{
   task_id: number | null = null;
   select_list_id: number | null = null;
   private subscription: Subscription | null = null;
+
+  pendienteTask: boolean = true;
+  completadaTask: boolean = true;
+  is_button_disable_pendiente: boolean = false;
+  is_button_disable_completada: boolean = false;
+  is_button_disable_add: boolean = true;
 
   constructor(
     private taskService: TaskService,
@@ -54,21 +60,43 @@ export class TasksComponent implements OnInit, OnDestroy{
     console.log(this.select_list_id);
     this.tasksCompletada=[];
     this.tasksPendiente=[];
-    this.taskService.getTasksList(Number(this.select_list_id)).subscribe({
-      next: (res) => {
-        res.map((r)=>{
-          if (r.status) {
-            this.tasksCompletada.push(r);
-          } else {
-            this.tasksPendiente.push(r);
-          }
-          
-        })
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    })
+    if(this.select_list_id == 0){
+      this.is_button_disable_add = false;
+      console.log(this.is_button_disable_add);
+      this.taskService.getTasks().subscribe({
+        next: (res) => {
+          res.map((r)=>{
+            if(r.is_active){
+              if (r.status) {
+                this.tasksCompletada.push(r);
+              } else {
+                this.tasksPendiente.push(r);
+              }
+            }
+          })
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      })
+    }else {
+      this.is_button_disable_add = true;
+      this.taskService.getTasksList(Number(this.select_list_id)).subscribe({
+        next: (res) => {
+          res.map((r)=>{
+            if (r.status) {
+              this.tasksCompletada.push(r);
+            } else {
+              this.tasksPendiente.push(r);
+            }
+            
+          })
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      })
+    }
   }
 
   onSwitchChange(event: Event, task: Task): void {
@@ -94,6 +122,35 @@ export class TasksComponent implements OnInit, OnDestroy{
         window.location.reload();
       }
     )
+  }
+
+  all_task(){
+    this.pendienteTask = true;
+    this.completadaTask = true;
+    this.is_button_disable_completada = false;
+    this.is_button_disable_pendiente = false;
+  }
+
+  completada_task(){
+    this.is_button_disable_completada = true;
+    this.is_button_disable_pendiente = false;
+    if(this.completadaTask){
+      this.pendienteTask = !this.pendienteTask;
+    }else{
+      this.completadaTask = !this.completadaTask;
+      this.completada_task();
+    }
+  }
+
+  pendiente_task(){
+    this.is_button_disable_pendiente = true;
+    this.is_button_disable_completada = false;
+    if(this.pendienteTask){
+      this.completadaTask = !this.completadaTask;
+    }else{
+      this.pendienteTask = !this.pendienteTask;
+      this.pendiente_task();
+    }
   }
  
 

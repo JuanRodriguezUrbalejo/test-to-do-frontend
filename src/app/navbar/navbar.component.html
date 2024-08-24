@@ -5,23 +5,51 @@
   <div class="navbar-container">
     <form [formGroup]="list_form">
       <div class="navbar-buttons">
+        <button type="button" class="btn" (click)="all_tasks_lists()">Todas las tareas</button>
         <div class="dynamic-buttons">
           
           <input *ngFor="let list of lists; let i = index"
-                 (blur)="update_list($event.target,list.id)"
-                 (click)="update_class(list.id)"
-                 value={{list.name}}
-                 [ngClass]="{'btn-active': is_active(list.id)}"
-                 class="btn"/>
+            (blur)="update_list($event.target,list.id)"
+            (click)="update_class(list.id)"
+            value={{list.name}}
+            [ngClass]="{'btn-active': is_active(list.id)}"
+            class="btn"/>
         </div>
 
         <button type="button" class="btn btn-add" (click)="new_list()" [disabled]="is_button_disable" >+ Nueva Lista</button>
       </div>
     </form>
-    <a href="#" class="btn-delete" (click)="delete_list()">
+    <a href="#" class="btn-delete" data-bs-toggle="modal" data-bs-target="#modal_delete_lista" data-bs-whatever="@getbootstrap">
       <img src="assets/img/eliminar.png" alt="Eliminar">
     </a>
   </div>
 </nav>
 
+<!-- Delete modal -->
+<div id="modal_delete_lista" class="modal fade" tabindex="-1">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title"> Eliminar </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+              <div class="alert alert-danger alert-dismissible alert-styled-left border-top-0 border-bottom-0 border-right-0">
+                  <span class="font-weight-semibold">
+                      <h4>¿Estás seguro que deseas eliminar la lista?</h4>
+                  </span>La lista se eliminará permanentemente con todas sus tareas.
+              </div>
+              <hr>
+          </div>
+
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+              <button type="button" (click)="delete_list()" data-bs-dismiss="modal" class="btn btn-danger">Eliminar</button>
+          </div>
+
+      </div>
+  </div>
+</div>
+<!-- /Delete modal -->
 
